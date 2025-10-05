@@ -54,8 +54,8 @@ const createBid = async (req, res) => {
       });
     }
 
-    // Check if there's a minimum bid increment
-    const minBidIncrement = item.minBidIncrement || Math.max(item.currentPrice * 0.05, 10);
+    // Check if there's a minimum bid increment (1 ₪ minimum)
+    const minBidIncrement = 1;
     if (amount < item.currentPrice + minBidIncrement) {
       return res.status(400).json({
         message: `ההצעה חייבת להיות גבוהה לפחות ב-${minBidIncrement} ₪ מהמחיר הנוכחי`

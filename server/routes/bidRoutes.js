@@ -18,8 +18,8 @@ const createBidValidation = [
     .isMongoId()
     .withMessage('מזהה פריט לא תקין'),
   body('amount')
-    .isFloat({ min: 0 })
-    .withMessage('סכום ההצעה חייב להיות מספר חיובי')
+    .isFloat({ min: 1 })
+    .withMessage('סכום ההצעה חייב להיות לפחות 1 ₪')
 ];
 
 // @route   POST /api/bids
