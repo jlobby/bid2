@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: bid2-server
+    env: node
+    rootDir: server
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    plan: free
