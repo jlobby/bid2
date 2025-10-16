@@ -13,7 +13,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000', 'https://bid2-nine.vercel.app'
+  origin: process.env.CLIENT_URL || 'https://bid2-nine.vercel.app', 'http://localhost:3000'
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
