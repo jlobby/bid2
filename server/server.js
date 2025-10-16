@@ -41,9 +41,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/items', require('./routes/itemRoutes'));
-app.use('/api/bids', require('./routes/bidRoutes'));
+app.use('/auth', require('./routes/authRoutes'));
+app.use('/items', require('./routes/itemRoutes'));
+app.use('/bids', require('./routes/bidRoutes'));
 
 // Import cron jobs for auction management
 const { checkEndedAuctions, checkEndingSoon } = require('./utils/cronJobs');
