@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'אימייל הוא שדה חובה'],
     unique: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'אנא הזן כתובת אימייל תקינה']
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'אנא הזן כתובת אימייל תקינה']
   },
   password: {
     type: String,
