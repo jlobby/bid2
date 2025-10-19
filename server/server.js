@@ -14,7 +14,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: [
-    'https://bid2-nine.vercel.app',
+    'https://bid2bid.vercel.app',
     'http://localhost:3000'
   ],
   credentials: true
