@@ -4,10 +4,7 @@ const {
   register,
   login,
   getMe,
-  updateProfile,
-  googleAuth,
-  googleCallback,
-  googleSuccess
+  updateProfile
 } = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -88,31 +85,6 @@ router.get('/me', authMiddleware, getMe);
 // @access  Private
 router.put('/profile', authMiddleware, updateProfileValidation, updateProfile);
 
-// @route   GET /api/auth/google
-// @desc    Google OAuth login
-// @access  Public
-router.get('/google', (req, res, next) => {
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    return res.status(500).json({ 
-      message: 'Google OAuth לא מוגדר. אנא הגדר GOOGLE_CLIENT_ID ו-GOOGLE_CLIENT_SECRET' 
-    });
-  }
-  googleAuth(req, res, next);
-});
-
-// @route   GET /api/auth/google/callback
-// @desc    Google OAuth callback
-// @access  Public
-router.get('/google/callback', (req, res, next) => {
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    return res.redirect(`${process.env.CLIENT_URL}/login?error=google_oauth_not_configured`);
-  }
-  googleCallback(req, res, next);
-});
-
-// @route   GET /api/auth/google/success
-// @desc    Google OAuth success
-// @access  Private
-router.get('/google/success', authMiddleware, googleSuccess);
+// Google OAuth routes removed - only regular registration/login supported
 
 module.exports = router;

@@ -198,68 +198,11 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// @desc    Google OAuth login
-// @route   GET /api/auth/google
-// @access  Public
-const googleAuth = passport.authenticate('google', {
-  scope: ['profile', 'email']
-});
-
-// @desc    Google OAuth callback
-// @route   GET /api/auth/google/callback
-// @access  Public
-const googleCallback = (req, res, next) => {
-  passport.authenticate('google', (err, user, info) => {
-    if (err) {
-      return res.redirect(`${process.env.CLIENT_URL}/login?error=google_auth_failed`);
-    }
-    
-    if (!user) {
-      return res.redirect(`${process.env.CLIENT_URL}/login?error=google_auth_failed`);
-    }
-
-    // Generate JWT token
-    const token = generateToken(user._id);
-    
-    // Redirect to frontend with token
-    res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
-  })(req, res, next);
-};
-
-// @desc    Google OAuth success handler
-// @route   GET /api/auth/google/success
-// @access  Private
-const googleSuccess = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    
-    res.json({
-      success: true,
-      message: 'התחברות עם Google הצליחה',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone,
-        address: user.address
-      }
-    });
-  } catch (error) {
-    console.error('Google success error:', error);
-    res.status(500).json({
-      message: 'שגיאה בקבלת פרטי המשתמש',
-      error: process.env.NODE_ENV === 'development' ? error.message : {}
-    });
-  }
-};
+// Google OAuth functions removed - only regular registration/login supported
 
 module.exports = {
   register,
   login,
   getMe,
-  updateProfile,
-  googleAuth,
-  googleCallback,
-  googleSuccess
+  updateProfile
 };
