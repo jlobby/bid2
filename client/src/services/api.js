@@ -60,6 +60,7 @@ export const itemsAPI = {
   approveItem: (id) => api.put(`/items/${id}/approve`),
   rejectItem: (id, reason) => api.put(`/items/${id}/reject`, { reason }),
   getPendingItems: () => api.get('/items/pending'),
+  getStats: () => api.get('/items/stats'),
 };
 
 // Bids API

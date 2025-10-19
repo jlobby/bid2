@@ -8,6 +8,13 @@ const HomePage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({
+    activeItems: 0,
+    totalUsers: 0,
+    totalBids: 0,
+    endingToday: 0
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
   const [filters, setFilters] = useState({
     page: 1,
     limit: 12,
@@ -51,9 +58,31 @@ const HomePage = () => {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      setStatsLoading(true);
+      const response = await itemsAPI.getStats();
+      setStats(response.data.stats);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchItems();
+    fetchStats();
   }, [filters]);
+
+  // Update stats every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchStats();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
@@ -131,18 +160,30 @@ const HomePage = () => {
             </div>
             
             {/* Quick Stats */}
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">500+</div>
+                <div className="text-3xl font-bold text-white mb-2">
+                  {statsLoading ? '...' : stats.activeItems}
+                </div>
                 <div className="text-blue-200">פריטים פעילים</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">1,200+</div>
+                <div className="text-3xl font-bold text-white mb-2">
+                  {statsLoading ? '...' : stats.totalUsers}
+                </div>
                 <div className="text-blue-200">משתמשים רשומים</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">98%</div>
-                <div className="text-blue-200">שיעור שביעות רצון</div>
+                <div className="text-3xl font-bold text-white mb-2">
+                  {statsLoading ? '...' : stats.totalBids}
+                </div>
+                <div className="text-blue-200">הצעות בסך הכל</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-2">
+                  {statsLoading ? '...' : stats.endingToday}
+                </div>
+                <div className="text-blue-200">מסתיימים היום</div>
               </div>
             </div>
           </div>

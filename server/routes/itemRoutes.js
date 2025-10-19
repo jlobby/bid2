@@ -120,6 +120,91 @@ router.get('/', getItems);
 // @access  Private/Admin
 router.get('/pending', authMiddleware, adminMiddleware, getPendingItems);
 
+// @route   DELETE /api/items/clear-all
+// @desc    Clear all data (admin only)
+// @access  Private/Admin
+router.delete('/clear-all', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const Item = require('../models/Item');
+    const Bid = require('../models/Bid');
+    
+    // Delete all items
+    const deletedItems = await Item.deleteMany({});
+    
+    // Delete all bids
+    const deletedBids = await Bid.deleteMany({});
+    
+    // Delete all users except admin
+    const deletedUsers = await User.deleteMany({ role: { $ne: 'admin' } });
+    
+    res.json({
+      success: true,
+      message: 'כל הנתונים נמחקו בהצלחה',
+      deleted: {
+        items: deletedItems.deletedCount,
+        bids: deletedBids.deletedCount,
+        users: deletedUsers.deletedCount
+      }
+    });
+  } catch (error) {
+    console.error('Clear data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'שגיאה במחיקת נתונים'
+    });
+  }
+});
+
+// @route   GET /api/items/stats
+// @desc    Get website statistics
+// @access  Public
+router.get('/stats', async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const Item = require('../models/Item');
+    const Bid = require('../models/Bid');
+    
+    // Count active items (approved and not ended)
+    const activeItems = await Item.countDocuments({
+      status: 'approved',
+      endDate: { $gt: new Date() }
+    });
+    
+    // Count total users
+    const totalUsers = await User.countDocuments();
+    
+    // Count total bids
+    const totalBids = await Bid.countDocuments();
+    
+    // Count items ending today
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const endingToday = await Item.countDocuments({
+      status: 'approved',
+      endDate: { $gte: today, $lt: tomorrow }
+    });
+    
+    res.json({
+      success: true,
+      stats: {
+        activeItems,
+        totalUsers,
+        totalBids,
+        endingToday
+      }
+    });
+  } catch (error) {
+    console.error('Stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'שגיאה בטעינת סטטיסטיקות'
+    });
+  }
+});
+
 // @route   GET /api/items/my-items
 // @desc    Get user's items
 // @access  Private

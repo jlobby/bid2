@@ -59,6 +59,34 @@ const AdminPanel = () => {
     }
   };
 
+  const handleClearAllData = async () => {
+    if (!window.confirm('האם אתה בטוח שברצונך למחוק את כל הנתונים? פעולה זו לא ניתנת לביטול!')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/items/clear-all', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        toast.success(`נמחקו ${result.deleted.items} פריטים, ${result.deleted.bids} הצעות ו-${result.deleted.users} משתמשים`);
+        fetchPendingItems();
+      } else {
+        const error = await response.json();
+        toast.error(error.message || 'שגיאה במחיקת הנתונים');
+      }
+    } catch (err) {
+      toast.error('שגיאה במחיקת הנתונים');
+      console.error('Error clearing data:', err);
+    }
+  };
+
   const getConditionText = (condition) => {
     const conditions = {
       excellent: 'מצוין',
@@ -90,8 +118,18 @@ const AdminPanel = () => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">פאנל ניהול</h1>
-        <p className="text-gray-600">נהל פריטים ממתינים לאישור</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">פאנל ניהול</h1>
+            <p className="text-gray-600">נהל פריטים ממתינים לאישור</p>
+          </div>
+          <button
+            onClick={handleClearAllData}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            🗑️ אפס את כל הנתונים
+          </button>
+        </div>
       </div>
 
       {error && (
