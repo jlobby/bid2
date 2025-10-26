@@ -55,7 +55,7 @@ const ItemCard = ({ item }) => {
       <Link to={`/item/${item._id}`}>
         <div className="relative overflow-hidden">
           <img
-            src={item.images[0] || '/placeholder-image.jpg'}
+            src={item.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[0]}` : '/placeholder-image.jpg'}
             alt={item.name}
             className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
             onError={(e) => {

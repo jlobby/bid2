@@ -150,7 +150,7 @@ const AdminPanel = () => {
               <div className="md:flex">
                 <div className="md:w-1/3">
                   <img
-                    src={item.images[0] || '/placeholder-image.jpg'}
+                    src={item.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[0]}` : '/placeholder-image.jpg'}
                     alt={item.name}
                     className="w-full h-64 md:h-full object-cover"
                     onError={(e) => {

@@ -100,7 +100,7 @@ const ItemPage = () => {
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <img
-              src={item.images[currentImageIndex] || '/placeholder-image.jpg'}
+              src={item.images[currentImageIndex] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[currentImageIndex]}` : '/placeholder-image.jpg'}
               alt={item.name}
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -120,7 +120,7 @@ const ItemPage = () => {
                   }`}
                 >
                   <img
-                    src={image}
+                    src={`${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${image}`}
                     alt={`${item.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -283,4 +283,5 @@ const ItemPage = () => {
 };
 
 export default ItemPage;
+
 

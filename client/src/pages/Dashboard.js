@@ -153,7 +153,7 @@ const Dashboard = () => {
                 <div key={item._id} className="bg-white rounded-lg shadow-md overflow-hidden">
                   <Link to={`/item/${item._id}`}>
                     <img
-                      src={item.images[0] || '/placeholder-image.jpg'}
+                      src={item.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[0]}` : '/placeholder-image.jpg'}
                       alt={item.name}
                       className="w-full h-48 object-cover"
                       onError={(e) => {
@@ -238,7 +238,7 @@ const Dashboard = () => {
                         <div className="flex-shrink-0 h-16 w-16">
                           <img
                             className="h-16 w-16 rounded-lg object-cover"
-                            src={bid.itemId?.images[0] || '/placeholder-image.jpg'}
+                            src={bid.itemId?.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${bid.itemId.images[0]}` : '/placeholder-image.jpg'}
                             alt={bid.itemId?.name}
                             onError={(e) => {
                               e.target.src = '/placeholder-image.jpg';
@@ -299,4 +299,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
