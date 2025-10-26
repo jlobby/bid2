@@ -251,17 +251,25 @@ const updateItem = async (req, res) => {
     const { name, description, startPrice, location, endDate, category, condition } = req.body;
     
     // Handle new images
-    let images = item.images;
-    if (req.files && req.files.length > 0) {
-      // Delete old images
-      item.images.forEach(imagePath => {
-        const fullPath = path.join(__dirname, '..', imagePath);
-        if (fs.existsSync(fullPath)) {
-          fs.unlinkSync(fullPath);
-        }
-      });
-      images = req.files.map(file => file.path);
+let images = item.images;
+if (req.files && req.files.length > 0) {
+  // Delete old images from Cloudinary
+  const { cloudinary } = require('../middleware/upload');
+  
+  for (const imageUrl of item.images) {
+    try {
+      // חילוץ ה-public_id מה-URL
+      const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0];
+      await cloudinary.uploader.destroy(publicId);
+      console.log('🗑️ תמונה ישנה נמחקה מ-Cloudinary:', publicId);
+    } catch (error) {
+      console.error('שגיאה במחיקת תמונה:', error);
     }
+  }
+  
+  // Save new images (URLs from Cloudinary)
+  images = req.files.map(file => file.path);
+}
 
     const updatedItem = await Item.findByIdAndUpdate(
       req.params.id,
@@ -320,13 +328,19 @@ const deleteItem = async (req, res) => {
       });
     }
 
-    // Delete associated images
-    item.images.forEach(imagePath => {
-      const fullPath = path.join(__dirname, '..', imagePath);
-      if (fs.existsSync(fullPath)) {
-        fs.unlinkSync(fullPath);
-      }
-    });
+ // Delete associated images from Cloudinary
+const { cloudinary } = require('../middleware/upload');
+
+for (const imageUrl of item.images) {
+  try {
+    // חילוץ ה-public_id מה-URL
+    const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0];
+    await cloudinary.uploader.destroy(publicId);
+    console.log('🗑️ תמונה נמחקה מ-Cloudinary:', publicId);
+  } catch (error) {
+    console.error('שגיאה במחיקת תמונה:', error);
+  }
+}
 
     // Delete associated bids
     await Bid.deleteMany({ itemId: req.params.id });
