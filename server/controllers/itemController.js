@@ -119,8 +119,12 @@ const getItem = async (req, res) => {
 // @access  Private
 const createItem = async (req, res) => {
   try {
+    console.log('📝 יצירת פריט חדש...');
+    console.log('📁 קבצים שהתקבלו:', req.files ? req.files.length : 0);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ שגיאות ולידציה:', errors.array());
       return res.status(400).json({
         message: 'נתונים לא תקינים',
         errors: errors.array()
@@ -130,9 +134,15 @@ const createItem = async (req, res) => {
     const { name, description, startPrice, location, endDate, category, condition, pricingType } = req.body;
     
     // Handle uploaded images
-    const images = req.files ? req.files.map(file => file.path) : [];
+    const images = req.files ? req.files.map(file => {
+      console.log('📸 קובץ תמונה:', file.filename, 'נתיב:', file.path);
+      return file.path;
+    }) : [];
+
+    console.log('🖼️ תמונות שנשמרו:', images);
 
     if (images.length === 0) {
+      console.log('❌ לא הועלו תמונות');
       return res.status(400).json({
         message: 'יש להעלות לפחות תמונה אחת'
       });

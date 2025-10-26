@@ -9,7 +9,8 @@
     "seed": "node scripts/seed.js",
     "clear": "node scripts/clearData.js",
     "create-admin": "node scripts/createAdmin.js",
-    "check-admin": "node scripts/checkAdmin.js"
+    "check-admin": "node scripts/checkAdmin.js",
+    "setup-uploads": "node scripts/setupUploads.js"
   },
   "dependencies": {
     "express": "^4.18.2",
