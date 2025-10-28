@@ -3,8 +3,11 @@ import { itemsAPI } from '../services/api';
 import ItemCard from '../components/ItemCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Logo from '../components/Logo';
+import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const HomePage = () => {
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,6 +106,18 @@ const HomePage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     fetchItems();
+  };
+
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm('האם למחוק את הפריט? פעולה זו בלתי הפיכה.')) return;
+    try {
+      await itemsAPI.deleteItem(itemId);
+      toast.success('הפריט נמחק בהצלחה');
+      fetchItems();
+    } catch (error) {
+      const message = error.response?.data?.message || 'שגיאה במחיקת הפריט';
+      toast.error(message);
+    }
   };
 
   if (loading && items.length === 0) {
@@ -269,7 +284,19 @@ const HomePage = () => {
                   className="animate-fadeInUp"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <ItemCard item={item} />
+                  <div className="relative">
+                    <ItemCard item={item} />
+                    {user?.role === 'admin' && (
+                      <div className="absolute top-3 left-3 z-10">
+                        <button
+                          onClick={() => handleDeleteItem(item._id)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs shadow"
+                        >
+                          מחק
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
