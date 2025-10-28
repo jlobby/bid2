@@ -3,6 +3,19 @@ import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 
+// פונקציה לתיקון URL של תמונות
+const fixImageUrl = (url) => {
+  if (!url) return '/placeholder-image.jpg';
+  
+  // אם זה כבר URL מלא (Cloudinary)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // אם זה נתיב יחסי (תמונות ישנות)
+  return `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${url}`;
+};
+
 const ItemCard = ({ item }) => {
   const formatTimeRemaining = (endDate) => {
     const now = new Date();
@@ -55,7 +68,7 @@ const ItemCard = ({ item }) => {
       <Link to={`/item/${item._id}`}>
         <div className="relative overflow-hidden">
           <img
-            src={item.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[0]}` : '/placeholder-image.jpg'}
+            src={fixImageUrl(item.images[0])}
             alt={item.name}
             className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
             onError={(e) => {
@@ -166,4 +179,3 @@ const ItemCard = ({ item }) => {
 };
 
 export default ItemCard;
-
