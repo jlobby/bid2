@@ -72,6 +72,21 @@ const AdminPanel = () => {
     }
   };
 
+  const handleDelete = async (itemId) => {
+    if (!window.confirm('האם אתה בטוח שברצונך למחוק את הפריט? פעולה זו בלתי הפיכה.')) {
+      return;
+    }
+
+    try {
+      await itemsAPI.deleteItem(itemId);
+      toast.success('הפריט נמחק בהצלחה');
+      fetchPendingItems();
+    } catch (error) {
+      const message = error.response?.data?.message || 'שגיאה במחיקת הפריט';
+      toast.error(message);
+    }
+  };
+
   const handleClearAllData = async () => {
     if (!window.confirm('האם אתה בטוח שברצונך למחוק את כל הנתונים? פעולה זו לא ניתנת לביטול!')) {
       return;
@@ -257,6 +272,12 @@ const AdminPanel = () => {
                       className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
                     >
                       דחה
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      מחק
                     </button>
                   </div>
                 </div>
