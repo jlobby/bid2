@@ -5,6 +5,19 @@ import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 
+// פונקציה לתיקון URL של תמונות
+const fixImageUrl = (url) => {
+  if (!url) return '/placeholder-image.jpg';
+  
+  // אם זה כבר URL מלא (Cloudinary)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // אם זה נתיב יחסי (תמונות ישנות)
+  return `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${url}`;
+};
+
 const AdminPanel = () => {
   const [pendingItems, setPendingItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -150,7 +163,7 @@ const AdminPanel = () => {
               <div className="md:flex">
                 <div className="md:w-1/3">
                   <img
-                    src={item.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[0]}` : '/placeholder-image.jpg'}
+                    src={fixImageUrl(item.images[0])}
                     alt={item.name}
                     className="w-full h-64 md:h-full object-cover"
                     onError={(e) => {
@@ -297,4 +310,3 @@ const AdminPanel = () => {
 };
 
 export default AdminPanel;
-

@@ -7,6 +7,18 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 
+const fixImageUrl = (url) => {
+  if (!url) return '/placeholder-image.jpg';
+  
+  // אם זה כבר URL מלא (Cloudinary או אחר)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // אם זה נתיב יחסי (תמונות ישנות)
+  return `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${url}`;
+};
+
 const ItemPage = () => {
   const { id } = useParams();
   const [item, setItem] = useState(null);
@@ -100,7 +112,7 @@ const ItemPage = () => {
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <img
-              src={item.images[currentImageIndex] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[currentImageIndex]}` : '/placeholder-image.jpg'}
+              src={fixImageUrl(item.images[currentImageIndex])}
               alt={item.name}
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -120,7 +132,7 @@ const ItemPage = () => {
                   }`}
                 >
                   <img
-                    src={`${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${image}`}
+                    src={fixImageUrl(image)}
                     alt={`${item.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -283,5 +295,3 @@ const ItemPage = () => {
 };
 
 export default ItemPage;
-
-

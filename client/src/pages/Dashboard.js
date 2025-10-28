@@ -5,6 +5,19 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 
+// פונקציה לתיקון URL של תמונות
+const fixImageUrl = (url) => {
+  if (!url) return '/placeholder-image.jpg';
+  
+  // אם זה כבר URL מלא (Cloudinary)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // אם זה נתיב יחסי (תמונות ישנות)
+  return `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${url}`;
+};
+
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('items');
   const [myItems, setMyItems] = useState([]);
@@ -153,7 +166,7 @@ const Dashboard = () => {
                 <div key={item._id} className="bg-white rounded-lg shadow-md overflow-hidden">
                   <Link to={`/item/${item._id}`}>
                     <img
-                      src={item.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${item.images[0]}` : '/placeholder-image.jpg'}
+                      src={fixImageUrl(item.images[0])}
                       alt={item.name}
                       className="w-full h-48 object-cover"
                       onError={(e) => {
@@ -238,7 +251,7 @@ const Dashboard = () => {
                         <div className="flex-shrink-0 h-16 w-16">
                           <img
                             className="h-16 w-16 rounded-lg object-cover"
-                            src={bid.itemId?.images[0] ? `${process.env.REACT_APP_API_URL || 'https://bid2-1.onrender.com'}${bid.itemId.images[0]}` : '/placeholder-image.jpg'}
+                            src={fixImageUrl(bid.itemId?.images[0])}
                             alt={bid.itemId?.name}
                             onError={(e) => {
                               e.target.src = '/placeholder-image.jpg';
@@ -299,5 +312,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
